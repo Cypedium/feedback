@@ -49,7 +49,7 @@ const Navbar = () => {
           {menuOpen ? '✖' : '☰'}
         </button> */}
         <ul className={`styles.navLinks ${menuOpen ? 'open' : 'closed'}`}>
-          <li onClick={() => setMenuOpen(false)}><Link href="/">Happy Feedbacks</Link></li>
+          <li onClick={() => setMenuOpen(false)}><Link href="/">Happy Feedback</Link></li>
           <li onClick={() => setMenuOpen(false)}><Link href="/feedback">Create Feedback</Link></li>
           <li onClick={() => setMenuOpen(false)}><Link href="/">List of Feedback</Link></li>
           <li onClick={() => setMenuOpen(false)}><Link href="/register">Register User</Link></li>

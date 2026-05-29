@@ -83,7 +83,7 @@ export default function Home() {
   return (
     <div>
       <br /><br />
-      <h1 className={styles.title}>Happy Feedbacks</h1>
+      <h1 className={styles.title}>Happy Feedback</h1>
       {feedbacks.length > 0 ? (
         <div className={styles.feedbackList}>
           {filteredFeedbacks.map((fb, index) => (
@@ -101,7 +101,7 @@ export default function Home() {
                   alert('You can only delete your own feedback.');
               }}}
               >
-                <FontAwesomeIcon icon={faTrash} style={{color: "darkred"}} />
+                <FontAwesomeIcon className='styles.trashCan' icon={faTrash} style={{color: "darkred"}} />
               </button>
               <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
               <p><em><strong>User: </strong></em> {fb.username}</p>
