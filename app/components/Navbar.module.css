@@ -1,0 +1,144 @@
+.nav {
+  display: flex;
+  background-color: #007bff;
+  border: 1px solid #aaa;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  padding-left: 3%;
+  padding-right: 2%;
+  position: fixed;
+  width: 100%;
+  z-index: 1000; /* Ensures nav stays above other content */
+}
+
+.nav-titles {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  margin-right: auto;
+  /* Pushes the title to the left */
+  padding-right: 1px;
+  /* Adds space between title and links */
+}
+
+
+.nav ul {
+  display: flex;
+  gap: 40px;
+  /* Adds space between links */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #fff;
+}
+
+.nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.nav ul li a:hover {
+  text-decoration: underline;
+}
+
+.nav ul li button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 400;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  width: "20px";
+}
+
+.nav ul li button:hover {
+  text-decoration: underline;
+}
+
+.profile-link {
+  display: flex;
+}
+
+.profile-container {
+  align-items: right;
+  gap: 20px;
+}
+
+.profile-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.menu-toggle {
+  color: #fff;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: space-around;
+  position: fixed;
+  top: 0px;
+  right: 10;
+  width: 2rem;
+  height: 2rem;
+  margin: 2px;
+}
+
+.nav-links {
+  display: flex;
+}
+
+@media screen and (min-width: 768px) {
+  .menu-toggle {
+    display: none;
+    padding-bottom: 20px;
+  }
+
+}
+
+@media screen and (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-links.closed {
+    display: none;
+  }
+
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    margin-top: 60px;
+    padding-bottom: 20px;
+
+  }
+
+  .nav-title {
+    padding-right: 0;
+    /* Removes extra padding on smaller screens */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav ul {
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 480px) {
+
+  .nav ul li a,
+  .nav ul li button {
+    font-size: 12px;
+  }
+}

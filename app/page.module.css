@@ -1,0 +1,56 @@
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+
+.feedbackList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 40px;
+}
+
+
+.textarea {
+    max-width: 400px;
+    margin: 6px auto;
+    padding: 6px;
+    background-color: #ced3d4;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.card {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.starRating {
+  color: gold;
+}
+
+.starRating .empty {
+  color: #ccc;
+}
+
+
+.filters input {
+  margin: 0 10px;
+  padding: 5px;
+}
+
+.deletebutton {
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  float: right;
+}

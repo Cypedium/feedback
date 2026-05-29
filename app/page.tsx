@@ -1,103 +1,129 @@
-import Image from "next/image";
+'use client';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import styles from './page.module.css';
+import { deleteFeedback } from './lib/endpoints';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
+
+type Feedback = {
+  _id?: string;
+  rating: number;
+  comment: string;
+  productId: string;
+  username: string;
+  submittedAt: string;
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [minRating, setMinRating] = useState(1);
+  const [maxRating, setMaxRating] = useState(5);
+  const [startDate, setStartDate] = useState('');
+  const [comment, setComment] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [userName, setUserName] = useState('');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const filteredFeedbacks = feedbacks.filter(fb => {
+    // Search match
+    const searchMatch =
+      fb.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      fb.productId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      fb.comment?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      fb.submittedAt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      fb.rating?.toString().includes(searchQuery) ||
+      fb.comment?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Rating match
+    const ratingMatch = fb.rating >= minRating && fb.rating <= maxRating;
+
+    // Date match
+    const submittedDate = new Date(fb.submittedAt);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    const dateMatch =
+      (!start || submittedDate >= start) &&
+      (!end || submittedDate <= end);
+
+    // Final condition: must match both search and filters
+    return searchMatch && ratingMatch && dateMatch;
+  });
+
+  // Move deleteFeedbackCard outside useEffect so it's accessible in the component
+  const deleteFeedbackCard = async (id: string) => {
+    try {
+      await deleteFeedback(id);
+      setFeedbacks(prev => prev.filter(fb => fb._id !== id));
+    } catch (err: any) {
+      console.error('Error deleting feedback:', err);
+      setError(err.message || 'Error deleting feedback');
+    }
+  };
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axios.get<Feedback[]>('http://localhost:4000/feedbacks');
+        setFeedbacks(response.data);
+      } catch (err: any) {
+        console.error('Error fetching feedbacks:', err);
+        setError(err.message || 'Error fetching feedbacks');
+      }
+    };
+
+    const nameFromStorage = localStorage.getItem('username');
+    setUserName(nameFromStorage || '');
+
+    fetchFeedbacks();
+  }, []);
+
+  return (
+    <div>
+      <br /><br />
+      <h1 className={styles.title}>Happy Feedbacks</h1>
+      {feedbacks.length > 0 ? (
+        <div className={styles.feedbackList}>
+          {filteredFeedbacks.map((fb, index) => (
+            <div className={styles.card} key={index}>
+              <button className={styles.deleteButton} onClick={() => {
+                if (userName === fb.username) {
+                  if (confirm('Are you sure you want to delete this feedback?')) {
+                    if (fb._id) {
+                      deleteFeedbackCard(fb._id);
+                    } else {
+                      alert('Feedback ID is missing. Cannot delete.');
+                    }
+                  }
+                } else {
+                  alert('You can only delete your own feedback.');
+              }}}
+              >
+                <FontAwesomeIcon icon={faTrash} style={{color: "darkred"}} />
+              </button>
+              <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
+              <p><em><strong>User: </strong></em> {fb.username}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <p style={{ margin: 0 }}>
+                  <em><strong>Rating:</strong></em>
+                </p>
+                <div className={styles.starRating}>
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className={i < fb.rating ? '' : styles.empty}>★</span>
+                  ))}
+                </div>
+              </div>
+              <p><em><strong>Product:</strong></em> {fb.productId}</p>
+              <p><em><strong>Comment:</strong></em> {fb.comment}</p>
+            </div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      ) : (
+        <p>No feedback found.</p>
+      )
+    }
+  </div>
   );
 }
