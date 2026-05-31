@@ -5,15 +5,6 @@
   font-weight: bold;
 }
 
-
-.feedbackList {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  padding: 20px;
-}
-
-
 .textarea {
     max-width: 400px;
     margin: 6px auto;
@@ -57,4 +48,32 @@
   border-radius: 5px;
   cursor: pointer;
   float: right;
+}
+
+.feedbackList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+/* 3 columns */
+@media (max-width: 1100px) {
+  .feedbackList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 2 columns */
+@media (max-width: 800px) {
+  .feedbackList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 1 column */
+@media (max-width: 500px) {
+  .feedbackList {
+    grid-template-columns: 1fr;
+  }
 }

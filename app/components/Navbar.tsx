@@ -44,15 +44,23 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={styles.nav}>        
-        {/* <button className={styles.menuToggle} onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? '✖' : '☰'}
-        </button> */}
-        <ul className={`styles.navLinks ${menuOpen ? 'open' : 'closed'}`}>
-          <li onClick={() => setMenuOpen(false)}><Link href="/">Happy Feedback</Link></li>
-          <li onClick={() => setMenuOpen(false)}><Link href="/feedback">Create Feedback</Link></li>
-          <li onClick={() => setMenuOpen(false)}><Link href="/">List of Feedback</Link></li>
-          <li onClick={() => setMenuOpen(false)}><Link href="/register">Register User</Link></li>
+      <nav className={styles.nav}>
+      <button className={styles.menuToggle}
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        {menuOpen ? "✖" : "☰"}
+      </button>
+
+      <ul className={`${styles.navLinks} ${menuOpen ? styles.open : styles.closed}`}>
+        <li onClick={() => setMenuOpen(false)}>
+          <Link href="/feedback">Create Feedback</Link>
+        </li>
+        <li onClick={() => setMenuOpen(false)}>
+          <Link href="/">List of Feedback</Link>
+        </li>
+        <li onClick={() => setMenuOpen(false)}>
+          <Link href="/register">Register User</Link>
+        </li>
 
           {!isLoggedIn && (
             <li><Link href="/login">Login</Link></li>

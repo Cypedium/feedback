@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { handleLogout } from '../utils/logout';
-import './Navbar.css';
+import styles from './Navbar.module.css';
 import axios from 'axios';
 import pic from '../public/images/pic2.png';
 
@@ -43,11 +43,11 @@ const Navbar = () => {
   }, [users, userName]);
 
   return (
-    <nav className="nav">
-      <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+    <nav className={styles.nav}>
+      <div className={styles.menuToggle} onClick={() => setMenuOpen(!menuOpen)}>
         ☰
       </div>
-      <ul className={`nav-links ${menuOpen ? 'active' : ''}`}>
+      <ul className={`${styles.navLinks} ${menuOpen ? styles.active : ''}`}>
         <li><Link href="/feedback">Write a opinion</Link></li>
         <li><Link href="/">List of opinion</Link></li>
         <li><Link href="/register">Register new user</Link></li>
@@ -61,12 +61,12 @@ const Navbar = () => {
             <li key="logout">
               <button onClick={handleLogout}>Logout</button>
             </li>
-            <li className="profile-link" key="profile">
+            <li className={styles.profileLink} key="profile">
               <Link href="/profile">
-                <div className="profile-container">
+                <div className={styles.profileContainer}>
                   {userName && (
                     <>
-                      <span className="profile-name">{userName}</span>
+                      <span className={styles.profileName}>{userName}</span>
                       <img src={pic.src} width={60} height={50} />
                     </>
                   )}

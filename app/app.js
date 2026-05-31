@@ -1,14 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-//const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const Feedback = require('./models/Feedback');
 const User = require('./models/User');
 const app = express();
-// 🛡️ Use environment variables for sensitive config in production
-const JWT_SECRET = '458899HelpMe!';
+const  dotenv = require('dotenv');
+
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // 🧩 Middleware
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
