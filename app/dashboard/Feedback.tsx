@@ -5,9 +5,11 @@ import styles from './Feedback.module.css';
 import { submitFeedback } from '../lib/endpoints';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { sv } from 'date-fns/locale/sv'; // Swedish locale (starts week on Monday)
+import leoProfanity from "leo-profanity";
 
 registerLocale('sv', sv);
-
+leoProfanity.loadDictionary(); // English
+leoProfanity.loadDictionary('sv'); // Swedish
 
 export default function Feedback() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -23,30 +25,41 @@ export default function Feedback() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    try {
-      const res = await submitFeedback({
-        rating,
-        comment,
-        productId,
-        username,
-      });
-      const feedbackResult = res.data;
-      if (res.status !== 200) {
-        setMessage(feedbackResult.message || 'Failed to submit feedback.');
-        return;
-      }
-      setMessage(feedbackResult.message || 'Feedback submitted!');
-      setRating(0);
-      setComment('');
-      setProductId('');
-      // ✅ Redirect after successful submission
-      router.push('/'); //without next.js window.location.href = 'http://localhost:3000';
+    // Client-side profanity check
+  if (leoProfanity.check(comment) || leoProfanity.check(productId)) {
+    setMessage("Your text contains inappropriate language. Please remove it and try again.");
+    return;
+  }
 
+    try {
+        const res = await submitFeedback({
+          rating,
+          comment,
+          productId,
+          username,
+        });
+        const feedbackResult = res.data;
+        if (res.status !== 200) {
+          setMessage(feedbackResult.message || 'Failed to submit feedback.');
+          return;
+        }
+        
+        setMessage(feedbackResult.message || 'Feedback submitted!');
+        setRating(0);
+        setComment('');
+        setProductId('');
+        // ✅ Redirect after successful submission
+        //without next.js window.location.href = 'http://localhost:3000';
+        // Delay the redirect slightly to allow users to see the success message
+        setTimeout(() => {
+          router.push("/");
+        }, 5000); 
     } catch (error) {
       console.error('Submission error:', error);
       setMessage('Failed to submit feedback.');
     }
   };
+
 
   const handleStarClick = (index: number) => {
     setRating(index + 1);
@@ -76,7 +89,7 @@ export default function Feedback() {
             onChange={(e) => setProductId(e.target.value)}
             placeholder="Add your product here"
             required
-            style={{ resize: 'none', width: '400', height: '50px' }}
+            className={styles.textarea}
           />
           <label>Date:</label>
           <div className={styles.dateBox}>
@@ -97,7 +110,7 @@ export default function Feedback() {
           </div>
 
           <br />
-          <label>Kommentar:</label>
+          <label>Comment:</label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
@@ -105,7 +118,9 @@ export default function Feedback() {
           />
 
           <br />
-          <button type="submit">Skicka feedback</button>
+          <button className={styles.submitButton} type="submit">
+            Submit Feedback
+          </button>
           {message && <p style={{ marginTop: '12px' }}>{message}</p>}
           <br />
         </form>
