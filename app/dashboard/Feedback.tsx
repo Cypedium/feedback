@@ -99,6 +99,7 @@ export default function Feedback() {
           required
           locale="sv"
           className={styles.dateInput}
+          maxDate={new Date()} // Prevent future dates
         />
         <span
           className={styles.dateIcon}
