@@ -5,7 +5,7 @@ const fs = require('fs');
 const feedbackData = JSON.parse(fs.readFileSync('seed.json', 'utf8'));
 
 // Define your API endpoint
-const endpoint = 'http://localhost:4000/feedback';
+const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/feedback`; // e.g., 'http://localhost:4000/feedback'
 
 // Function to post each feedback entry
 async function postSeedtoDb() {

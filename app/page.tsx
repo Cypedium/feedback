@@ -65,8 +65,8 @@ export default function Home() {
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      try {
-        const response = await axios.get<Feedback[]>('http://localhost:4000/feedbacks');
+      try { //`${process.env.NEXT_PUBLIC_API_URL}/users`
+        const response = await axios.get<Feedback[]>(`${process.env.NEXT_PUBLIC_API_URL}/feedback`);
         setFeedbacks(response.data);
       } catch (err: any) {
         console.error('Error fetching feedbacks:', err);

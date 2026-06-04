@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export const handleLogout = async () => {
 
   try {
-    await fetch('http://localhost:4000/logout', {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
