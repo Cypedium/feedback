@@ -48,8 +48,7 @@ export default function Feedback() {
       setRating(0);
       setComment('');
       setProductId('');
-      // ✅ Redirect after successful submission
-      //without next.js window.location.href = 'http://localhost:3000';
+   
       // Delay the redirect slightly to allow users to see the success message
       setTimeout(() => {
         router.push("/");
