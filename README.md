@@ -2,6 +2,16 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Fast Setup
+
+FE
+npm run dev
+
+BE
+node server.js
+
+[Open](http://localhost:3000]) in your browser
+
 First, run the development server:
 
 ```bash

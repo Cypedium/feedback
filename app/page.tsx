@@ -101,7 +101,7 @@ export default function Home() {
                   alert('You can only delete your own feedback.');
               }}}
               >
-                <FontAwesomeIcon className='styles.trashCan' icon={faTrash} style={{color: "darkred"}} />
+                <FontAwesomeIcon className='styles.trashCan' icon={faTrash} style={{color: "black"}} />
               </button>
               <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
               <p><em><strong>User: </strong></em> {fb.username}</p>
