@@ -83,7 +83,7 @@ export default function Home() {
   return (
     <div>
       <br /><br />
-      <h1 className={styles.title}>Happy Feedback</h1>
+      <h1 className={styles.title}>Aurell Feedback</h1>
       {feedbacks.length > 0 ? (
         <div className={styles.feedbackList}>
           {filteredFeedbacks.map((fb, index) => (
