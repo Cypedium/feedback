@@ -1,9 +1,7 @@
 # Environment variables
-.env
-.env.local
-
-# Node modules
-node_modules/
+# Ignore local development env files
+app/.env
+.env.development.local
 
 # Logs
 npm-debug.log*
