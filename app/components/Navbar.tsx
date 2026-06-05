@@ -17,12 +17,10 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+
     const fetchFeedbacks = async () => {
       try {
-        const response = await axios.get<User[]>(
-          `${process.env.NEXT_PUBLIC_API_URL}/users`
-        );
-
+        const response = await axios.get<User[]>(process.env.NEXT_PUBLIC_API_URL + '/users');
         setUsers(response.data);
       } catch (err: any) {
         console.error('Error fetching feedbacks:', err);

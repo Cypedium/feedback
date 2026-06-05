@@ -10,7 +10,7 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        router.push     ("/login");
+        router.push(process.env.NEXT_PUBLIC_API_URL + "/login");
         setIsAuthenticated(false);
         return;
       }

@@ -6,6 +6,7 @@ import { deleteFeedback } from './lib/endpoints';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
+
 type Feedback = {
   _id?: string;
   rating: number;
@@ -65,7 +66,7 @@ export default function Home() {
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const response = await axios.get<Feedback[]>(`${process.env.NEXT_PUBLIC_API_URL}/feedbacks`);
+        const response = await axios.get<Feedback[]>('http://localhost:4000/feedbacks' || 'https://aurelllfeedback.fly.dev/feedbacks', { withCredentials: true });
         setFeedbacks(response.data);
       } catch (err: any) {
         console.error('Error fetching feedbacks:', err);
@@ -82,7 +83,7 @@ export default function Home() {
   return (
     <div>
       <br /><br />
-      <h1 className={styles.title}>Happy Feedback</h1>
+      <h1 className={styles.title}>Aurell Feedback</h1>
       {feedbacks.length > 0 ? (
         <div className={styles.feedbackList}>
           {filteredFeedbacks.map((fb, index) => (
