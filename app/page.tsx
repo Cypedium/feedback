@@ -63,10 +63,11 @@ export default function Home() {
     }
   };
 
+  // Fetch feedbacks on component mount Debug: { withCredentials: true }
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const response = await axios.get<Feedback[]>('http://localhost:4000/feedbacks' || 'https://aurelllfeedback.fly.dev/feedbacks', { withCredentials: true });
+        const response = await axios.get<Feedback[]>(process.env.NEXT_PUBLIC_API_URL + '/feedbacks');
         setFeedbacks(response.data);
       } catch (err: any) {
         console.error('Error fetching feedbacks:', err);

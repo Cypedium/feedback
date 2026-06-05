@@ -2,8 +2,8 @@
 const app = require('../app/app');
 const mongoose = require('mongoose');
 require('dotenv').config();
-
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/aurellfeedback';
+//  Old local db 'mongodb://localhost:27017/aurellfeedback'
+const MONGO_URI = process.env.MONGO_URI;
 
 // 🔗 Connect to MongoDB
 mongoose.connect(MONGO_URI)
