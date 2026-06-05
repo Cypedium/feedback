@@ -28,6 +28,7 @@ export default function Home() {
   const [userName, setUserName] = useState('');
 
   const filteredFeedbacks = feedbacks.filter(fb => {
+    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
     // Search match
     const searchMatch =
       fb.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
