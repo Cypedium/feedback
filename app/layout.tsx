@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Feedback App",
+  title: "Aurell Feedback App",
   description: "Generated for the feedback application",
 };
 

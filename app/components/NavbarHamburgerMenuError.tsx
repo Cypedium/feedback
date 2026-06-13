@@ -1,4 +1,4 @@
-'use client';
+/* 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { handleLogout } from '../utils/logout';
@@ -80,4 +80,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar; */

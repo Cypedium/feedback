@@ -1,8 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import styles from './page.module.css';
-import { deleteFeedback } from './lib/endpoints';
+import { deleteFeedback, getFeedbacks } from './api/endpoints';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
@@ -19,39 +18,40 @@ type Feedback = {
 export default function Home() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [minRating, setMinRating] = useState(1);
-  const [maxRating, setMaxRating] = useState(5);
+  //const [searchQuery, setSearchQuery] = useState('');
+  //const [minRating, setMinRating] = useState(1);
+  //const [maxRating, setMaxRating] = useState(5);
   const [startDate, setStartDate] = useState('');
   const [comment, setComment] = useState('');
   const [endDate, setEndDate] = useState('');
   const [userName, setUserName] = useState('');
 
   const filteredFeedbacks = feedbacks.filter(fb => {
-    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+    
     // Search match
-    const searchMatch =
+    /* Todo: const searchMatch =
       fb.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       fb.productId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       fb.comment?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       fb.submittedAt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       fb.rating?.toString().includes(searchQuery) ||
-      fb.comment?.toLowerCase().includes(searchQuery.toLowerCase());
+      fb.comment?.toLowerCase().includes(searchQuery.toLowerCase()); */
 
-    // Rating match
-    const ratingMatch = fb.rating >= minRating && fb.rating <= maxRating;
+    // // Todo: Rating match
+    // const ratingMatch = fb.rating >= minRating && fb.rating <= maxRating;
 
     // Date match
-    const submittedDate = new Date(fb.submittedAt);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    const dateMatch =
-      (!start || submittedDate >= start) &&
-      (!end || submittedDate <= end);
+    //const submittedDate = new Date(fb.submittedAt);
+    //const start = startDate ? new Date(startDate) : null;
+    //const end = endDate ? new Date(endDate) : null;
+    //const dateMatch =
+    //  (!start || submittedDate >= start) &&
+    //  (!end || submittedDate <= end);
 
-    // Final condition: must match both search and filters
-    return searchMatch && ratingMatch && dateMatch;
-  });
+    /* Todo: // Final condition: must match both search and filters
+    return searchMatch && ratingMatch && dateMatch; */
+    return true; // For now, show all feedbacks
+    });
 
   // Move deleteFeedbackCard outside useEffect so it's accessible in the component
   const deleteFeedbackCard = async (id: string) => {
@@ -68,7 +68,7 @@ export default function Home() {
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const response = await axios.get<Feedback[]>(process.env.NEXT_PUBLIC_API_URL + '/feedbacks');
+        const response = await getFeedbacks();
         setFeedbacks(response.data);
       } catch (err: any) {
         console.error('Error fetching feedbacks:', err);

@@ -3,14 +3,26 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { handleLogout } from '../utils/logout';
 import styles from './Navbar.module.css';
-import axios from 'axios';
+import { getFeedbacks, getUsers } from '../api/endpoints';
 
 type User = {
   username: string;
+  password: string;
   pictureUrl: string;
 };
 
+type Feedback = {
+  _id?: string;
+  rating: number;
+  comment: string;
+  productId: string;
+  username: string;
+  submittedAt: string;
+};
+
+
 const Navbar = () => {
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
   const [users, setUsers] = useState<User[]>([]);
@@ -20,10 +32,19 @@ const Navbar = () => {
 
     const fetchFeedbacks = async () => {
       try {
-        const response = await axios.get<User[]>(process.env.NEXT_PUBLIC_API_URL + '/users');
-        setUsers(response.data);
+        const response = await getFeedbacks();
+        setFeedbacks(response.data);
       } catch (err: any) {
         console.error('Error fetching feedbacks:', err);
+      }
+    };
+
+    const fetchUsers = async () => {
+      try {
+        const response = await getUsers();
+        setUsers(response.data);
+      } catch (err: any) {
+        console.error('Error fetching users:', err);
       }
     };
 

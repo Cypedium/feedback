@@ -16,17 +16,14 @@ export default function LoginForm() {
       });
 
       const data = await res.json();
-      console.log(data);
+      console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
       localStorage.setItem('username', username);
-     
-
-      // Redirect or update UI
-      window.location.href = '/'; // Or use router.push('/')
-
-
+  
       if (!res.ok) throw new Error(data.message || "Login failed");
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+
       alert("Login successful!");
       // Optionally redirect the user here
     } catch (error: any) {

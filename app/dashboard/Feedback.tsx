@@ -1,18 +1,20 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Feedback.module.css';
-import { submitFeedback } from '../lib/endpoints';
+import { submitFeedback } from '../api/endpoints';
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { sv } from 'date-fns/locale/sv'; // Swedish locale (starts week on Monday)
+import { sv } from 'date-fns/locale/sv';
 import leoProfanity from "leo-profanity";
 
+
 registerLocale('sv', sv);
-leoProfanity.loadDictionary(); // English
-leoProfanity.loadDictionary('sv'); // Swedish
+leoProfanity.loadDictionary();
+leoProfanity.loadDictionary('sv');
 
 export default function Feedback() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [userName, setUserName] = useState<string>('');
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState<string>('');
   const [message, setMessage] = useState<string | null>(null);
@@ -20,12 +22,15 @@ export default function Feedback() {
   const router = useRouter();
   const datePickerRef = useRef<any>(null);
 
-  const username = localStorage.getItem('username');
+  // Load username from localStorage ONCE
+  useEffect(() => {
+    const stored = localStorage.getItem('username');
+    setUserName(stored || '');
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Client-side profanity check
     if (leoProfanity.check(comment) || leoProfanity.check(productId)) {
       setMessage("Your text contains inappropriate language. Please remove it and try again.");
       return;
@@ -36,9 +41,12 @@ export default function Feedback() {
         rating,
         comment,
         productId,
-        username,
+        username: userName,   // FIXED
+        submittedAt: selectedDate?.toISOString() || new Date().toISOString()
       });
+
       const feedbackResult = res.data;
+
       if (res.status !== 200) {
         setMessage(feedbackResult.message || 'Failed to submit feedback.');
         return;
@@ -48,17 +56,17 @@ export default function Feedback() {
       setRating(0);
       setComment('');
       setProductId('');
-   
-      // Delay the redirect slightly to allow users to see the success message
+      setSelectedDate(null);
+
       setTimeout(() => {
-        router.push("/");
+        router.push("/feedback");
       }, 5000);
+
     } catch (error) {
       console.error('Submission error:', error);
       setMessage('Failed to submit feedback.');
     }
   };
-
 
   const handleStarClick = (index: number) => {
     setRating(index + 1);
@@ -78,7 +86,7 @@ export default function Feedback() {
           </span>
         ))}
       </div>
-      <br />
+
       <label className={styles.labelCreate}>Product:</label>
       <textarea
         value={productId}
@@ -87,6 +95,7 @@ export default function Feedback() {
         required
         className={styles.textareaCreate}
       />
+
       <label className={styles.labelCreate}>Date:</label>
       <div className={styles.dateBox}>
         <DatePicker
@@ -98,7 +107,7 @@ export default function Feedback() {
           required
           locale="sv"
           className={styles.dateInput}
-          maxDate={new Date()} // Prevent future dates
+          maxDate={new Date()}
         />
         <span
           className={styles.dateIcon}
@@ -106,7 +115,6 @@ export default function Feedback() {
         >📅</span>
       </div>
 
-      <br />
       <label className={styles.labelCreate}>Comment:</label>
       <textarea
         className={styles.textareaCreate}
@@ -115,12 +123,11 @@ export default function Feedback() {
         required
       />
 
-      <br />
       <button className={styles.buttonCreate} type="submit">
         Submit Feedback
       </button>
+
       {message && <p style={{ marginTop: '12px' }}>{message}</p>}
-      <br />
     </form>
   );
 }

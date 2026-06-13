@@ -7,23 +7,18 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        router.push(process.env.NEXT_PUBLIC_API_URL + "/login");
+    const checkAuth = () => {
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      // ❌ Ingen accessToken → redirect
+      if (!accessToken) {
+        router.replace("/login");
         setIsAuthenticated(false);
         return;
       }
 
-      // Optional: validate token with server
-      // const res = await fetch("/api/validate-token", { headers: { Authorization: `Bearer ${token}` } });
-      // if (!res.ok) {
-      //   localStorage.removeItem("token");
-      //   router.replace("/login");
-      //   setIsAuthenticated(false);
-      //   return;
-      // }
-
+      // ✔ AccessToken finns → användaren är inloggad
       setIsAuthenticated(true);
     };
 

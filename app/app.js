@@ -2,25 +2,32 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
 const Feedback = require('./models/Feedback');
 const User = require('./models/User');
-const app = express();
-const  dotenv = require('dotenv');
 
 dotenv.config();
+
+const app = express();
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Allowed origins
 const allowedOrigins = [
-  'http://localhost:3000', 
-  'https://aurellfeedback.fly.dev'
+  'http://localhost:3000',
+  'https://aurellfeedback.fly.dev',
 ];
 
-// 🧩 Middleware
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+// Middleware
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'DELETE']
+}));
+
 app.use(express.json());
 
-// 📝 Register user
+// Register user
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -33,7 +40,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// 🔐 Login user
+// Login user
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -42,25 +49,26 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials.' });
     }
 
-    // ✅ Create JWT token
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+  const accessToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "15m" });
+  const refreshToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "7d" });
+
+  res.json({ accessToken, refreshToken });
+
   } catch (err) {
     res.status(500).json({ message: 'Error logging in.' });
   }
 });
 
-// 🚪 Logout user
+// Logout user
 app.post('/logout', (req, res) => {
-  // No server-side token invalidation unless you implement a blacklist
   res.status(200).json({ message: 'Logged out successfully. Please discard your token.' });
 });
 
-// 💬 Submit feedback
+// Submit feedback
 app.post('/feedback', async (req, res) => {
-  const { rating, comment, productId, username } = req.body;
+  const { rating, comment, productId, username, submittedAt } = req.body;
   try {
-    const newFeedback = new Feedback({ rating, comment, productId, username });
+    const newFeedback = new Feedback({ rating, comment, productId, username, submittedAt });
     console.log('Saving feedback:', newFeedback);
     await newFeedback.save();
     res.status(200).json({ message: 'Feedback saved successfully!' });
@@ -70,10 +78,11 @@ app.post('/feedback', async (req, res) => {
   }
 });
 
-// 📊 Get all feedback
+// Get all feedbacks
 app.get('/feedbacks', async (req, res) => {
   try {
-    const feedbacks = await Feedback.find();
+    const feedbacks = await Feedback.find().sort({ submittedAt: -1 });
+    console.log('Fetched feedbacks:', feedbacks);
     res.status(200).json(feedbacks);
   } catch (error) {
     console.error('Error fetching feedbacks:', error);
@@ -81,10 +90,11 @@ app.get('/feedbacks', async (req, res) => {
   }
 });
 
-// 🧑‍🤝‍🧑 Get all users (for profile pictures)
+// Get all users
 app.get('/users', async (req, res) => {
   try {
-    const users = await User.find({}, 'username pictureUrl'); // Only return username and pictureUrl
+    const users = await User.find({}, 'username pictureUrl');
+    console.log('Fetched users:', users);
     res.status(200).json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -92,7 +102,7 @@ app.get('/users', async (req, res) => {
   }
 });
 
-// ❌ Delete feedback
+// Delete feedback
 app.delete('/feedback/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -102,6 +112,30 @@ app.delete('/feedback/:id', async (req, res) => {
     console.error('Error deleting feedback:', error);
     res.status(500).json({ message: 'Could not delete feedback.' });
   }
+});
+
+// 🔄 Refresh token
+app.post('/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "No refresh token provided" });
+  }
+
+  jwt.verify(refreshToken, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: "Invalid refresh token" });
+    }
+
+    // Skapa ny access token
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId },
+      JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.json({ accessToken: newAccessToken });
+  });
 });
 
 module.exports = app;
