@@ -1,5 +1,5 @@
 {
-  "name": "aurellfeedback",
+  "name": "aurellfeedback-frontend",
   "version": "1.1.0",
   "private": true,
   "scripts": {
@@ -13,14 +13,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
     "axios": "^1.16.1",
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
     "leo-profanity": "^1.9.0",
-    "mongodb": "^7.2.0",
-    "mongoose": "^9.6.3",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-datepicker": "^9.1.0",
