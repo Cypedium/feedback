@@ -1,6 +1,6 @@
 # Environment variables
 # Ignore local development env files
-app/.env
+.env.local
 .env.development.local
 
 # Logs
