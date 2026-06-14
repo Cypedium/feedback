@@ -1,10 +1,20 @@
 FROM node:18
-WORKDIR /app
 
+# Arbetskatalog i containern (kan heta vad som helst)
+WORKDIR /server
+
+# Kopiera bara backendens package.json
 COPY server/package*.json ./
-RUN npm install
 
+# Installera backendens dependencies
+RUN npm install --production
+
+# Kopiera backendens filer
 COPY server .
 
+# Fly.io sätter PORT automatiskt
+ENV NODE_ENV=production
+
 EXPOSE 4000
-CMD ["node", "server.js"]
+
+CMD ["node", "start.js"]

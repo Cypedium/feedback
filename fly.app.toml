@@ -1,8 +1,8 @@
-app = "aurellfeedback-frontend"
+app = "aurellfeedback"
 primary_region = "arn"
 
 [build]
-  dockerfile = "Dockerfile.client"
+  dockerfile = "Dockerfile.app"
 
 [http_service]
   internal_port = 3000

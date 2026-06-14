@@ -1,10 +1,10 @@
 FROM node:18 AS builder
 WORKDIR /app
 
-COPY client/package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY client .
+COPY . .
 RUN npm run build
 
 FROM node:18 AS runner

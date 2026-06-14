@@ -8,7 +8,7 @@ FE
 npm run dev
 
 BE
-node server.js
+node start.js
 
 [Open](http://localhost:3000]) in your browser
 

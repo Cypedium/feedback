@@ -3,9 +3,8 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-
-const Feedback = require('../server/models/Feedback');
-const User = require('../server/models/User');
+const Feedback = require('./models/Feedback');
+const User = require('./models/User');
 
 dotenv.config();
 
@@ -24,6 +23,18 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'DELETE']
 }));
+
+app.use(express.json());
+app.use(require("cors")({ origin: true, credentials: true }));
+
+// Auth routes
+app.use("/", require("./routes/auth"));
+
+// Feedback routes
+app.use("/", require("./routes/feedback"));
+
+// Users routes
+app.use("/", require("./routes/users"));
 
 app.use(express.json());
 
