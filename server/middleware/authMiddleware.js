@@ -1,5 +1,5 @@
-/* const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'your_secret_key'; // Use process.env in production
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET; // Use process.env in production
 
 function authenticateToken(req, res, next) {
   const token = req.headers['authorization']?.split(' ')[1];
@@ -12,4 +12,4 @@ function authenticateToken(req, res, next) {
   });
 }
 
-module.exports = authenticateToken; */
+module.exports = authenticateToken;

@@ -32,6 +32,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
+    console.log("User logged in:", username);
+
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -62,7 +64,7 @@ exports.refresh = (req, res) => {
 
     // Skapa ny access token
     const newAccessToken = jwt.sign(
-      { userId: decoded.userId },
+      { id: decoded.userId },
       JWT_SECRET,
       { expiresIn: "15m" }
     );

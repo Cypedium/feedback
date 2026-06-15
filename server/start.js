@@ -22,14 +22,17 @@ try {
 }
 
 const MONGO_URI = process.env.MONGO_URI;
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT;
 
 if (!MONGO_URI) {
   console.error('❌ MONGO_URI is not defined. Check your .env file.');
   process.exit(1);
 }
 
-console.log('Connecting to MongoDB at', MONGO_URI);
+if (!PORT) {
+  console.error('❌ PORT is not defined. Check your .env file.');
+  process.exit(1);
+}
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, {
