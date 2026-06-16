@@ -17,9 +17,10 @@ type User = {
 };
 
 // AUTH 
-export const registerUser = (user: User) => api.post('/register', user);
-export const loginUser = (user: User) => api.post('/login', user);
-export const logoutUser = () => api.post('/logout');
+export const registerUser = (user: User) => api.post('/auth/register', user);
+export const loginUser = (user: User) => api.post('/auth/login', user);
+export const logoutUser = () => api.post('/auth/logout');
+export const refreshToken = () => api.post('/auth/refresh');
 
 // FEEDBACK
 export const submitFeedback = (feedback: Feedback) => api.post('/feedback', feedback);
@@ -33,6 +34,7 @@ export default {
   registerUser,
   loginUser,
   logoutUser,
+  refreshToken,
   submitFeedback,
   getFeedbacks,
   getUsers,
