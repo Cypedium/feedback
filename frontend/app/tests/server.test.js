@@ -79,7 +79,7 @@ describe('Auth & Feedback API', () => {
     const mockFeedbacks = [{ rating: 5, comment: 'Nice' }];
     Feedback.find.mockResolvedValue(mockFeedbacks);
 
-    const res = await request(app).get('/feedbacks');
+    const res = await request(app).get('/feedback');
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(mockFeedbacks);

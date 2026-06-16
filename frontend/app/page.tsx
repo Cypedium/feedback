@@ -1,3 +1,4 @@
+// /app/page.tsx
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
 import { LayoutItem, ResponsiveGridLayout } from 'react-grid-layout';
@@ -36,13 +37,14 @@ export default function Home() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
     useEffect(() => {
+
         const fetchFeedbacks = async () => {
             try {
                 const response = await getFeedbacks();
                 setFeedbacks(response.data || []);
             } catch (err: any) {
                 console.error('Error fetching feedbacks:', err);
-                setError(err.message || 'Error fetching feedbacks');
+                setError('Error fetching feedbacks: ' + err.message);
             }
         };
 
@@ -206,51 +208,59 @@ export default function Home() {
             {feedbacks.length > 0 ? (
                 <ResponsiveGridLayout
                     className="gridLayout"
-                    layouts={{ lg: gridLayout as any }} // layouts kräver objekt per breakpoint
-                    cols={{ lg: clampCols(userLayout.cols) }}
+                    layouts={{ lg: gridLayout as any }}
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{
+                        lg: clampCols(userLayout.cols),
+                        md: clampCols(userLayout.cols),
+                        sm: Math.min(clampCols(userLayout.cols), 4),
+                        xs: 2,
+                        xxs: 1
+                    }}
                     rowHeight={120}
                     width={1200}
                     onLayoutChange={(currentLayout) => {
                         const layoutArray = currentLayout as LayoutItem[];
                         setGridLayout(layoutArray);
-                        // persist
+                        // persist...
                     }}
                 >
+                    
             {feedbacks.map((fb) => (
-                <div key={fb._id || fb.username + fb.submittedAt} className={styles.card} style={{ padding: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div className="card-handle" style={{ cursor: 'grab', fontWeight: 600 }}>☰</div>
-                        <button className={styles.deleteButton} onClick={() => {
-                            if (userName === fb.username) {
-                                if (confirm('Are you sure you want to delete this feedback?')) {
-                                    if (fb._id) {
-                                        deleteFeedbackCard(fb._id);
-                                    } else {
-                                        alert('Feedback ID is missing. Cannot delete.');
+                    <div key={fb._id || fb.username + fb.submittedAt} className={styles.card} style={{ padding: 12 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div className="card-handle" style={{ cursor: 'grab', fontWeight: 600 }}>☰</div>
+                            <button className={styles.deleteButton} onClick={() => {
+                                if (userName === fb.username) {
+                                    if (confirm('Are you sure you want to delete this feedback?')) {
+                                        if (fb._id) {
+                                            deleteFeedbackCard(fb._id);
+                                        } else {
+                                            alert('Feedback ID is missing. Cannot delete.');
+                                        }
                                     }
+                                } else {
+                                    alert('You can only delete your own feedback.');
                                 }
-                            } else {
-                                alert('You can only delete your own feedback.');
-                            }
-                        }}>
-                            <FontAwesomeIcon icon={faTrash} style={{ color: 'black' }} />
-                        </button>
-                    </div>
-
-                    <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
-                    <p><em><strong>User: </strong></em> {fb.username}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <p style={{ margin: 0 }}><em><strong>Rating:</strong></em></p>
-                        <div className={styles.starRating}>
-                            {[...Array(5)].map((_, i) => (
-                                <span key={i} className={i < fb.rating ? '' : styles.empty}>★</span>
-                            ))}
+                            }}>
+                                <FontAwesomeIcon icon={faTrash} style={{ color: 'black' }} />
+                            </button>
                         </div>
+
+                        <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
+                        <p><em><strong>User: </strong></em> {fb.username}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <p style={{ margin: 0 }}><em><strong>Rating:</strong></em></p>
+                            <div className={styles.starRating}>
+                                {[...Array(5)].map((_, i) => (
+                                    <span key={i} className={i < fb.rating ? '' : styles.empty}>★</span>
+                                ))}
+                            </div>
+                        </div>
+                        <p><em><strong>Product:</strong></em> {fb.productId}</p>
+                        <p><em><strong>Comment:</strong></em> {fb.comment}</p>
                     </div>
-                    <p><em><strong>Product:</strong></em> {fb.productId}</p>
-                    <p><em><strong>Comment:</strong></em> {fb.comment}</p>
-                </div>
-            ))}
+                ))}
         </ResponsiveGridLayout>
     ) : (
         <p>No feedback found.</p>

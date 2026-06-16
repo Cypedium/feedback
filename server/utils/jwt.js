@@ -1,22 +1,20 @@
 const jwt = require("jsonwebtoken");
 
-const generateAccessToken = (user) => {
+const JWT_SECRET = process.env.JWT_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
+
+exports.generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, username: user.username },
-    process.env.JWT_SECRET,
+    JWT_SECRET,
     { expiresIn: "15m" }
   );
 };
 
-const generateRefreshToken = (user) => {
+exports.generateRefreshToken = (user) => {
   return jwt.sign(
-    { id: user._id },
-    process.env.REFRESH_SECRET,
+    { id: user._id },   // VIKTIGT: samma fält som accessToken
+    REFRESH_SECRET,
     { expiresIn: "7d" }
   );
-};
-
-module.exports = {
-  generateAccessToken,
-  generateRefreshToken
 };

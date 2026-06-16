@@ -7,11 +7,15 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
+// ---------------- REGISTER ----------------
 exports.register = async (req, res) => {
   const { username, password, pictureUrl } = req.body;
+
   try {
     const existing = await User.findOne({ username });
-    if (existing) return res.status(409).json({ message: "Username already taken." });
+    if (existing) {
+      return res.status(409).json({ message: "Username already taken." });
+    }
 
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser = new User({ username, passwordHash, pictureUrl });
@@ -24,8 +28,10 @@ exports.register = async (req, res) => {
   }
 };
 
+// ---------------- LOGIN ----------------
 exports.login = async (req, res) => {
   const { username, password } = req.body;
+
   try {
     const user = await User.findOne({ username });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
@@ -37,21 +43,28 @@ exports.login = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Returnera tokens i body (din frontend använder localStorage)
-    res.json({ accessToken, refreshToken });
+    // Frontend använder localStorage → returnera tokens i body
+    res.json({
+      accessToken,
+      refreshToken
+    });
+
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Error logging in." });
   }
 };
 
+// ---------------- LOGOUT ----------------
 exports.logout = (req, res) => {
-  // Stateless logout: frontend tar bort tokens från localStorage
+  // Stateless logout — frontend tar bort tokens
   res.status(200).json({ message: "Logged out successfully." });
 };
 
+// ---------------- REFRESH TOKEN ----------------
 exports.refresh = (req, res) => {
   const { refreshToken } = req.body;
+
   if (!refreshToken) {
     return res.status(401).json({ message: "No refresh token provided" });
   }
@@ -62,13 +75,22 @@ exports.refresh = (req, res) => {
       return res.status(403).json({ message: "Invalid refresh token" });
     }
 
-    // Skapa ny access token
+    // decoded.id finns nu eftersom generateRefreshToken använder { id: user._id }
     const newAccessToken = jwt.sign(
-      { id: decoded.userId },
+      { id: decoded.id },
       JWT_SECRET,
       { expiresIn: "15m" }
     );
 
-    res.json({ accessToken: newAccessToken });
+    const newRefreshToken = jwt.sign(
+      { id: decoded.id },
+      REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
+    });
   });
 };

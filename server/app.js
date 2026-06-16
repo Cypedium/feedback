@@ -11,7 +11,7 @@ app.use(cors({
     'http://localhost:3000',
     'https://aurellfeedback.fly.dev'
   ],
-  credentials: true
+  credentials: true  
 }));
 
 // Helper to require route modules safely and log a helpful warning if missing

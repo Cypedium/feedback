@@ -46,12 +46,19 @@ mongoose.connect(MONGO_URI, {
     // Graceful shutdown
     const shutdown = (signal) => {
       console.log(`\nReceived ${signal}. Closing server and MongoDB connection...`);
-      server.close(() => {
-        mongoose.connection.close(false, () => {
-          console.log('MongoDB connection closed.');
+      
+      // Stop accepting new requests with promise-based close
+      server.close(async () => {
+        try {
+          await mongoose.connection.close(false);
+          console.log("MongoDB connection closed.");
+        } catch (err) {
+          console.error("Error closing MongoDB:", err);
+        } finally {
           process.exit(0);
-        });
+        }
       });
+
       // Force exit after 10s
       setTimeout(() => {
         console.warn('Forcing shutdown.');

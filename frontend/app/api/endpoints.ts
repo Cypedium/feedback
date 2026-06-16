@@ -1,3 +1,4 @@
+// app/api/endpoints.ts
 import api from './api';
 
 type Feedback = {
@@ -22,7 +23,7 @@ export const logoutUser = () => api.post('/logout');
 
 // FEEDBACK
 export const submitFeedback = (feedback: Feedback) => api.post('/feedback', feedback);
-export const getFeedbacks = () => api.get('/feedbacks');
+export const getFeedbacks = () => api.get('/feedback');
 export const deleteFeedback = (id: string) => api.delete(`/feedback/${id}`);
 
 // USERS
