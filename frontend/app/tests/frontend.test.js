@@ -22,7 +22,7 @@ describe("Frontend API layer", () => {
 
     const res = await endpoints.getFeedbacks();
 
-    expect(api.get).toHaveBeenCalledWith("/feedbacks");
+    expect(api.get).toHaveBeenCalledWith("/feedback");
     expect(res.status).toBe(200);
     expect(Array.isArray(res.data)).toBe(true);
   });

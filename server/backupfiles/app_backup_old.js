@@ -34,7 +34,7 @@ app.use("/", require("../routes/auth"));
 app.use("/", require("../routes/feedback"));
 
 // Users routes
-app.use("/", require("../routes/users"));
+app.use("/", require("../routes/user"));
 
 app.use(express.json());
 
@@ -60,8 +60,8 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials.' });
     }
 
-  const accessToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "15m" });
-  const refreshToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "7d" });
+  const accessToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "15m" });
+  const refreshToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
   res.json({ accessToken, refreshToken });
 
@@ -90,7 +90,7 @@ app.post('/feedback', async (req, res) => {
 });
 
 // Get all feedbacks
-app.get('/feedbacks', async (req, res) => {
+app.get('/feedback', async (req, res) => {
   try {
     const feedbacks = await Feedback.find().sort({ submittedAt: -1 });
     console.log('Fetched feedbacks:', feedbacks);
@@ -140,7 +140,7 @@ app.post('/refresh', (req, res) => {
 
     // Skapa ny access token
     const newAccessToken = jwt.sign(
-      { userId: decoded.userId },
+      { id: decoded.id },
       JWT_SECRET,
       { expiresIn: "15m" }
     );

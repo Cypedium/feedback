@@ -51,7 +51,7 @@ const Navbar = () => {
     const token = localStorage.getItem('token');
     const nameFromStorage = localStorage.getItem('username');
 
-    setIsLoggedIn(!!token);
+    setIsLoggedIn(true);
     setUserName(nameFromStorage || '');
     fetchFeedbacks();
   }, []);

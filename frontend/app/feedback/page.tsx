@@ -1,6 +1,6 @@
 'use client';
-import Feedback from "../dashboard/Feedback";
-import PrivateLayout from "../PrivateLayout";
+import Feedback from "./Feedback";
+import PrivateLayout from "./PrivateLayout";
 
 export default function FeedbackPage() {
   return (

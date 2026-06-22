@@ -39,8 +39,12 @@ if (authRoutes) app.use('/auth', authRoutes);
 const feedbackRoutes = safeRequireRoute('./routes/feedback');
 if (feedbackRoutes) app.use('/feedback', feedbackRoutes);
 
-const userRoutes = safeRequireRoute('./routes/users');
-if (userRoutes) app.use('/users', userRoutes);
+const userRoutes = safeRequireRoute('./routes/user');
+if (userRoutes) app.use('/user', userRoutes);
+
+const userLayoutRoutes = require("./routes/userLayout");
+app.use("/userLayout", userLayoutRoutes);
+
 
 // Optional: simple health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));

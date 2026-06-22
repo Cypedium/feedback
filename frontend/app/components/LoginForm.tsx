@@ -9,7 +9,7 @@ export default function LoginForm() {
     e.preventDefault();
 
     try {
-      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/login", {
+      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -17,15 +17,23 @@ export default function LoginForm() {
 
       const data = await res.json();
       console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
-      localStorage.setItem('username', username);
-  
-      if (!res.ok) throw new Error(data.message || "Login failed");
 
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Spara användarnamn (om du använder det i UI)
+      localStorage.setItem("username", username);
+
+      // ⭐ Spara tokens korrekt
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
 
       alert("Login successful!");
-      // Optionally redirect the user here
+
+      // Redirect om du vill
+      // window.location.href = "/dashboard";
+
     } catch (error: any) {
       alert(error.message || "An unexpected error occurred");
     }

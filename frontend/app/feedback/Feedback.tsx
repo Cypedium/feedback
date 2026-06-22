@@ -1,3 +1,4 @@
+// app/feedback/Feedback.tsx
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -59,7 +60,7 @@ export default function Feedback() {
       setSelectedDate(null);
 
       setTimeout(() => {
-        router.push("/feedback");
+        router.push("/");
       }, 5000);
 
     } catch (error) {

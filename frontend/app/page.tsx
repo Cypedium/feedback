@@ -2,11 +2,12 @@
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
 import { LayoutItem, ResponsiveGridLayout } from 'react-grid-layout';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import debounce from 'lodash.debounce';
 import styles from './page.module.css';
-import { deleteFeedback, getFeedbacks } from './api/endpoints';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import api from './api/api'; // ⭐ axios-instansen
+import { deleteFeedback } from './api/endpoints';
 
 type Feedback = {
     _id?: string;
@@ -23,9 +24,7 @@ type UserLayout = {
     cards?: { id: string; x: number; y: number; w: number; h: number }[];
 };
 
-
-const DEFAULT_LAYOUT: UserLayout = { cols: 6, headers: [] }; // välj rimlig default inom 2-10
-
+const DEFAULT_LAYOUT: UserLayout = { cols: 6, headers: [] };
 
 export default function Home() {
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
@@ -34,62 +33,52 @@ export default function Home() {
     const [gridLayout, setGridLayout] = useState<LayoutItem[]>([]);
     const [userName, setUserName] = useState('');
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-
+    // 🔥 Hämta feedback via api.ts (token-rotation ingår)
     useEffect(() => {
-
         const fetchFeedbacks = async () => {
             try {
-                const response = await getFeedbacks();
-                setFeedbacks(response.data || []);
+                const res = await api.get('/feedback');
+                setFeedbacks(res.data || []);
             } catch (err: any) {
                 console.error('Error fetching feedbacks:', err);
                 setError('Error fetching feedbacks: ' + err.message);
             }
         };
 
-        const nameFromStorage = localStorage.getItem('username');
-        setUserName(nameFromStorage || '');
-
+        setUserName(localStorage.getItem('username') || '');
         fetchFeedbacks();
     }, []);
 
-    useEffect(() => {
-        const loadLayout = async () => {
-            if (token) {
-                try {
-                    const res = await fetch('/user/layout', {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        const merged = { ...DEFAULT_LAYOUT, ...data };
-                        // säkerställ att cols ligger inom 2-10
-                        merged.cols = clampCols(merged.cols);
-                        setUserLayout(merged);
-                        buildGridLayout(merged, feedbacks);
-                        return;
-                    }
-                } catch (e) {
-                    console.warn('Could not load layout from server, falling back to localStorage', e);
-                }
-            }
-            const saved = localStorage.getItem('user_layout');
-            if (saved) {
-                const parsed = JSON.parse(saved) as UserLayout;
-                parsed.cols = clampCols(parsed.cols);
-                const merged = { ...DEFAULT_LAYOUT, ...parsed };
+    // 🔥 Hämta layout från server eller localStorage
+    useEffect(() => { const loadLayout = async () => {
+        try {
+            const res = await api.get('/user/layout');
+            if (res.status === 200) {
+                const merged = { ...DEFAULT_LAYOUT, ...res.data };
+                merged.cols = clampCols(merged.cols);
                 setUserLayout(merged);
                 buildGridLayout(merged, feedbacks);
-            } else {
-                setUserLayout(DEFAULT_LAYOUT);
-                buildGridLayout(DEFAULT_LAYOUT, feedbacks);
+                return;
             }
-        };
+        } catch (e) {
+            console.warn('Could not load layout from server, falling back to localStorage');
+        }
 
-        loadLayout();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, feedbacks.length]);
+        const saved = localStorage.getItem('user_layout');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            parsed.cols = clampCols(parsed.cols);
+            const merged = { ...DEFAULT_LAYOUT, ...parsed };
+            setUserLayout(merged);
+            buildGridLayout(merged, feedbacks);
+        } else {
+            setUserLayout(DEFAULT_LAYOUT);
+            buildGridLayout(DEFAULT_LAYOUT, feedbacks);
+        }
+    };
+
+    loadLayout();
+}, [feedbacks.length]);
 
     const clampCols = (n: any) => {
         const num = Number(n) || DEFAULT_LAYOUT.cols;
@@ -112,30 +101,24 @@ export default function Home() {
 
     useEffect(() => {
         buildGridLayout(userLayout, feedbacks);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [feedbacks]);
+    }, []);
 
+    // Debug when null items exists
+    //console.log(feedbacks.map(item => item.submittedAt));
+
+    // 🔥 Spara layout till server via api.ts
     const saveLayoutToServer = useCallback(
         debounce(async (newLayout: UserLayout) => {
             try {
-                if (!token) return;
-                await fetch('/user/layout', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify(newLayout)
-                });
+                await api.put('/user/layout', newLayout);
             } catch (e) {
                 console.error('Failed to save layout to server', e);
             }
         }, 800),
-        [token]
+        []
     );
 
     const persistLayout = (next: UserLayout) => {
-        // säkerställ cols inom 2-10 innan persist
         next.cols = clampCols(next.cols);
         setUserLayout(next);
         localStorage.setItem('user_layout', JSON.stringify(next));
@@ -225,49 +208,46 @@ export default function Home() {
                         // persist...
                     }}
                 >
-                    
-            {feedbacks.map((fb) => (
-                    <div key={fb._id || fb.username + fb.submittedAt} className={styles.card} style={{ padding: 12 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div className="card-handle" style={{ cursor: 'grab', fontWeight: 600 }}>☰</div>
-                            <button className={styles.deleteButton} onClick={() => {
-                                if (userName === fb.username) {
-                                    if (confirm('Are you sure you want to delete this feedback?')) {
-                                        if (fb._id) {
-                                            deleteFeedbackCard(fb._id);
-                                        } else {
-                                            alert('Feedback ID is missing. Cannot delete.');
+                    {feedbacks.map((fb) => (  
+                        <div key={fb._id || fb.username + fb.submittedAt} className={styles.card} style={{ padding: 12 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div className="card-handle" style={{ cursor: 'grab', fontWeight: 600 }}>☰</div>
+                                <button className={styles.deleteButton} onClick={() => {
+                                    if (userName === fb.username) {
+                                        if (confirm('Are you sure you want to delete this feedback?')) {
+                                            if (fb._id) {
+                                                deleteFeedbackCard(fb._id);
+                                            } else {
+                                                alert('Feedback ID is missing. Cannot delete.');
+                                            }
                                         }
+                                    } else {
+                                        alert('You can only delete your own feedback.');
                                     }
-                                } else {
-                                    alert('You can only delete your own feedback.');
-                                }
-                            }}>
-                                <FontAwesomeIcon icon={faTrash} style={{ color: 'black' }} />
-                            </button>
-                        </div>
-
-                        <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
-                        <p><em><strong>User: </strong></em> {fb.username}</p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <p style={{ margin: 0 }}><em><strong>Rating:</strong></em></p>
-                            <div className={styles.starRating}>
-                                {[...Array(5)].map((_, i) => (
-                                    <span key={i} className={i < fb.rating ? '' : styles.empty}>★</span>
-                                ))}
+                                }}>
+                                    <FontAwesomeIcon icon={faTrash} style={{ color: 'black' }} />
+                                </button>
                             </div>
-                        </div>
-                        <p><em><strong>Product:</strong></em> {fb.productId}</p>
-                        <p><em><strong>Comment:</strong></em> {fb.comment}</p>
-                    </div>
-                ))}
-        </ResponsiveGridLayout>
-    ) : (
-        <p>No feedback found.</p>
-    )
-}
 
-{ error && <div style={{ color: 'red', marginTop: 12 }}>{error}</div> }
+                            <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
+                            <p><em><strong>User: </strong></em> {fb.username}</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <p style={{ margin: 0 }}><em><strong>Rating:</strong></em></p>
+                                <div className={styles.starRating}>
+                                    {[...Array(5)].map((_, i) => (
+                                        <span key={i} className={i < fb.rating ? '' : styles.empty}>★</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <p><em><strong>Product:</strong></em> {fb.productId}</p>
+                            <p><em><strong>Comment:</strong></em> {fb.comment}</p>
+                        </div>
+                    ))}
+                </ResponsiveGridLayout>
+            ) : (<p>No feedback found.</p>)
+            }
+
+            {error && <div style={{ color: 'red', marginTop: 12 }}></div>}
         </div >
     );
 }

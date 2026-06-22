@@ -11,14 +11,14 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
       const accessToken = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
 
-      // ❌ Ingen accessToken → redirect
-      if (!accessToken) {
+      // ❌ Om båda saknas → användaren är inte inloggad
+      if (!accessToken && !refreshToken) {
         router.replace("/login");
         setIsAuthenticated(false);
         return;
       }
 
-      // ✔ AccessToken finns → användaren är inloggad
+      // ✔ Minst en token finns → låt axios-interceptorn avgöra resten
       setIsAuthenticated(true);
     };
 

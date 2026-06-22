@@ -1,7 +1,7 @@
 // server/controllers/userController.js
 const User = require("../models/User");
 
-// GET ALL USERS
+// GET ALL USERS (public or admin)
 exports.getAll = async (req, res) => {
   try {
     const users = await User.find({}, "username pictureUrl");
@@ -35,7 +35,7 @@ exports.deleteAll = async (req, res) => {
   }
 };
 
-// ⭐ GET USER LAYOUT
+// ⭐ NEW: GET USER LAYOUT
 exports.getLayout = async (req, res) => {
   try {
     const id = req.user.id;
@@ -46,14 +46,20 @@ exports.getLayout = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    return res.status(200).json(user.layout);
+    // Return stored layout or default
+    return res.status(200).json(user.layout || {
+      cols: 12,
+      headers: [],
+      cards: []
+    });
+
   } catch (error) {
     console.error("Get layout error:", error);
     res.status(500).json({ message: "Could not retrieve layout." });
   }
 };
 
-// ⭐ UPDATE USER LAYOUT
+// ⭐ NEW: UPDATE USER LAYOUT
 exports.updateLayout = async (req, res) => {
   try {
     const id = req.user.id;
@@ -74,6 +80,7 @@ exports.updateLayout = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: "Layout updated successfully." });
+
   } catch (error) {
     console.error("Update layout error:", error);
     res.status(500).json({ message: "Failed to update layout." });

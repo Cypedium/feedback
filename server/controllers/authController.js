@@ -94,3 +94,29 @@ exports.refresh = (req, res) => {
     });
   });
 };
+
+// Debug for only local use 
+// controllers/authController.js
+/*
+exports.register = async (req, res) => {
+  // validera/skapande i DB om du vill; annars stub
+  const user = { id: "dev-user-id", email: req.body.email || "dev@example.com" };
+  return res.json({ accessToken: "dev-access-token", user });
+};
+
+exports.login = async (req, res) => {
+  // validera användare i DB om du vill; annars stub
+  const user = { id: "dev-user-id", email: req.body.email || "dev@example.com" };
+  return res.json({ accessToken: "dev-access-token", user });
+};
+
+exports.refresh = (req, res) => {
+  // returnera dummy token utan cookie/verifiering
+  return res.json({ accessToken: "dev-access-token", expiresIn: 3600 });
+};
+
+exports.logout = (req, res) => {
+  // rensa cookie om den finns, men utan verifiering
+  res.clearCookie && res.clearCookie("refreshToken");
+  return res.json({ message: "Logged out (dev mode)" });
+}; */

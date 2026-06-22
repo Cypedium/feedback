@@ -4,7 +4,7 @@ const app = require("../app/app"); // Import the Express app
 
 describe("API tests for aurellfeedback", () => {
   test("GET /feedbacks should return array", async () => {
-    const res = await request(app).get("/feedbacks");
+    const res = await request(app).get("/feedback");
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
