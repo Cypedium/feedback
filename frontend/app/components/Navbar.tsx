@@ -20,7 +20,6 @@ type Feedback = {
   submittedAt: string;
 };
 
-
 const Navbar = () => {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
