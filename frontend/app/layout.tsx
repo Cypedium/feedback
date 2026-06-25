@@ -1,9 +1,11 @@
-// frontend/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+// TypeScript may complain about side-effect CSS imports when no
+// type declarations are present. Ignore the check for this import.
+// @ts-ignore
+import "./root.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

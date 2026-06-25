@@ -1,8 +1,7 @@
-// app/feedback/Feedback.tsx
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from './Feedback.module.css';
+import styles from './feedback.module.css';
 import { submitFeedback } from '../api/endpoints';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { sv } from 'date-fns/locale/sv';

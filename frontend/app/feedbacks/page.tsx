@@ -1,7 +1,6 @@
 'use client';
-
 import PrivateLayout from "../components/PrivateLayout";
-import Feedbacks from "./Feedbacks";
+import Feedbacks from "./feedbacks";
 
 export default function FeedbacksPage() {
   return (

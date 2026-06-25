@@ -1,4 +1,3 @@
-// /app/page.tsx
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
 import { LayoutItem, ResponsiveGridLayout } from 'react-grid-layout';
