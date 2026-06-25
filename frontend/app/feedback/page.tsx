@@ -1,13 +1,24 @@
 'use client';
-import Feedback from "./Feedback";
-import PrivateLayout from "./PrivateLayout";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Feedback from "./Feedback"; // ditt formulär
 
 export default function FeedbackPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <PrivateLayout>
-        <Feedback />
-      </PrivateLayout>
-    </div>
-  );
+  const router = useRouter();
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      router.replace("/"); // root tar hand om redirect till login
+    } else {
+      setAllowed(true); // visa formuläret
+    }
+  }, []);
+
+  if (!allowed) return null; // visa inget innan redirect/allow
+
+  return <Feedback />;
 }
