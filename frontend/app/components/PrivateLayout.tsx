@@ -31,5 +31,9 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
 
   if (!isAuthenticated) return null;
 
-  return <>{children}</>;
+  return (
+    <html>
+      <body>{children}</body>
+    </html>
+  )
 }
