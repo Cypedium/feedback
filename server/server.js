@@ -1,4 +1,4 @@
-// server/start.js
+// server/server.js
 require('dotenv').config();
 const path = require('path');
 const mongoose = require('mongoose');

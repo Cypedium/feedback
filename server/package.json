@@ -2,10 +2,10 @@
   "name": "aurellfeedback-backend",
   "version": "1.0.0",
   "private": true,
-  "main": "start.js",
+  "main": "server.js",
   "scripts": {
-    "dev": "nodemon start.js",
-    "start": "node start.js",
+    "dev": "nodemon server.js",
+    "start": "node server.js",
     "test": "jest"
   },
   "dependencies": {

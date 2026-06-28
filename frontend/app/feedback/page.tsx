@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Feedback from "./feedback"; // ditt formulär
+import Feedback from "./feedback";
 
 export default function FeedbackPage() {
   const router = useRouter();

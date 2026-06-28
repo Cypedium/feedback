@@ -1,7 +1,9 @@
 import requests
 import json
 
-BASE_URL = "http://localhost:4000"
+# BASE_URL = "http://localhost:4000"
+
+BASE_URL = "https://aurellfeedback-backend.fly.dev"
 
 # Globala tokens
 access_token = None

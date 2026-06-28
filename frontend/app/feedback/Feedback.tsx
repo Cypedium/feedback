@@ -74,7 +74,7 @@ export default function Feedback() {
 
   return (
     <form className={styles.formCreate} onSubmit={handleSubmit}>
-      <label className={styles.labelCreate}>Rating:</label>
+      <label className={styles.labelCreate}>Priority:</label>
       <div className={styles.starRating}>
         {[...Array(5)].map((_, index) => (
           <span
@@ -87,7 +87,7 @@ export default function Feedback() {
         ))}
       </div>
 
-      <label className={styles.labelCreate}>Product:</label>
+      <label className={styles.labelCreate}>Issue Key:</label>
       <textarea
         value={productId}
         onChange={(e) => setProductId(e.target.value)}
@@ -115,7 +115,7 @@ export default function Feedback() {
         >📅</span>
       </div>
 
-      <label className={styles.labelCreate}>Comment:</label>
+      <label className={styles.labelCreate}>Summary:</label>
       <textarea
         className={styles.textareaCreate}
         value={comment}

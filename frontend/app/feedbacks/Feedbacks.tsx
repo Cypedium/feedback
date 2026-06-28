@@ -231,15 +231,15 @@ export default function Home() {
                             <p><em><strong>Date:</strong></em> {fb.submittedAt.substring(0, 10)}</p>
                             <p><em><strong>User: </strong></em> {fb.username}</p>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <p style={{ margin: 0 }}><em><strong>Rating:</strong></em></p>
+                                <p style={{ margin: 0 }}><em><strong>Time Tracking:</strong></em></p>
                                 <div className={styles.starRating}>
                                     {[...Array(5)].map((_, i) => (
                                         <span key={i} className={i < fb.rating ? '' : styles.empty}>★</span>
                                     ))}
                                 </div>
                             </div>
-                            <p><em><strong>Product:</strong></em> {fb.productId}</p>
-                            <p><em><strong>Comment:</strong></em> {fb.comment}</p>
+                            <p><em><strong>Issue Key:</strong></em> {fb.productId}</p>
+                            <p><em><strong>Summary:</strong></em> {fb.comment}</p>
                         </div>
                     ))}
                 </ResponsiveGridLayout>
