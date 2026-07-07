@@ -1,6 +1,6 @@
 'use client';
 import Layout from "../components/Layout";
-import Feedbacks from "./feedbacks";
+import Feedbacks from "./Feedbacks";
 
 export default function FeedbacksPage() {
   return (

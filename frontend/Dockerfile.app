@@ -1,6 +1,6 @@
 # --- Builder ---
 # --- Builder ---
-FROM node:18 AS builder
+FROM node:22 AS builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -15,7 +15,7 @@ COPY . .
 RUN npm run build
 
 # --- Runner ---
-FROM node:18 AS runner
+FROM node:22 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
