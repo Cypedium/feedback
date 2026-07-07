@@ -73,20 +73,16 @@ const Navbar = () => {
 
       <ul className={`${styles.navLinks} ${menuOpen ? styles.open : styles.closed}`}>
         <li onClick={() => setMenuOpen(false)}>
-          <Link href="/feedback">Create Feedback</Link>
+          <Link href="/feedback">Create Card</Link>
         </li>
         <li onClick={() => setMenuOpen(false)}>
-          <Link href="/">List of Feedback</Link>
+          <Link href="/">List of Cards</Link>
         </li>
         <li onClick={() => setMenuOpen(false)}>
           <Link href="/register">Register User</Link>
         </li>
 
-          {!isLoggedIn && (
-            <li><Link href="/login">Login</Link></li>
-          )}
-
-          {isLoggedIn && (
+          {isLoggedIn ? (
             <>
               <li key="logout">
                 <button onClick={handleLogout}>Logout</button>
@@ -95,14 +91,16 @@ const Navbar = () => {
                 <Link href="/profile">
                   <div className="profile-container">
                     {userName && (
-                      <>
-                        <span className="profile-name">{userName}</span>
-                      </>
+                      <span className="profile-name">{userName}</span>
                     )}
                   </div>
                 </Link>
               </li>
             </>
+          ) : (
+            <li key="login">
+              <Link href="/login">Login</Link>
+            </li>
           )}
         </ul>
       </nav>

@@ -148,10 +148,10 @@ export default function Home() {
     };
 
     return (
-        <div style={{ padding: 16 }}>
+        <div id="feedbacks-container">
             <br />
-            <h1 className={styles.title}>Aurell Feedback</h1>
-            <div style={{ marginBottom: 12, display: 'flex', gap: 12, alignItems: 'center' }}>
+            <h1 className={styles.title}>Aurell Gira Board</h1>
+            <div>
                 <label>
                     <strong>Kolumner</strong>
                     <select
@@ -187,6 +187,7 @@ export default function Home() {
                 </div>
             </div>
 
+            <div className={styles.wrapper}>
             {feedbacks.length > 0 ? (
                 <ResponsiveGridLayout
                     className="gridLayout"
@@ -245,6 +246,7 @@ export default function Home() {
                 </ResponsiveGridLayout>
             ) : (<p>No feedback found.</p>)
             }
+            </div>
 
             {error && <div style={{ color: 'red', marginTop: 12 }}></div>}
         </div >

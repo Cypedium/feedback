@@ -9,7 +9,7 @@ export default function LoginForm() {
     e.preventDefault();
 
     try {
-      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -30,6 +30,7 @@ export default function LoginForm() {
       localStorage.setItem("refreshToken", data.refreshToken);
 
       alert("Login successful!");
+      window.location.href = "/feedbacks"; // 🔥 redirect efter OK
 
       // Redirect om du vill
       // window.location.href = "/dashboard";
